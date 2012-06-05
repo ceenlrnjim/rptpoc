@@ -1,0 +1,8 @@
+greeting(test) ::= "This is a $test$"
+signoff(verb,noun) ::= "$verb$ $noun$"
+multiline(value) ::= <<
+This is
+a
+multi-line
+$value$
+>>

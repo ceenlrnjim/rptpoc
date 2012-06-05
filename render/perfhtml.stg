@@ -1,0 +1,41 @@
+simplePerfReport(perf_data, perf_prefs) ::= <<
+<html><body>
+    $returnTable(perf_data, perf_prefs)$
+</body></html>
+>>
+returnTable(perf_data, perf_prefs) ::= <<
+    <table>
+        $headerRow(perf_data, perf_prefs)$
+        <tbody>
+            $accountRow(perf_data, perf_prefs)$
+            $perf_prefs.benchmarks: { bmark | $benchmarkRow(bmark, perf_data, perf_prefs)$ }$
+        </tbody>
+    </table>
+>>
+headerRow(perf_data, perf_prefs) ::= <<
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Level of Return</th>
+        <th>Currency</th>
+        $perf_prefs.timeperiods: { tp | <th>$tp$</th> }$
+    </tr>
+    </thead>
+>>
+accountRow(perf_data, perf_prefs) ::= <<
+    <tr>
+        <td>$perf_prefs.grpid$</td>
+        <td>TODO</td>
+        <td>TODO</td>
+        $perf_prefs.timeperiods: { tp | <td>TODO</td> }$
+    </tr>
+>>
+benchmarkRow(bmark, perf_data, perf_prefs) ::= <<
+    <tr>
+        <td>$bmark$</td>
+        <td>TODO</td>
+        <td>TODO</td>
+        $perf_prefs.timeperiods: { tp | <td>TODO</td> }$
+    </tr>
+>>
+
