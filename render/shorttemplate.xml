@@ -1,0 +1,79 @@
+<template>
+    <reportData>
+        <!-- TODO: who decides which services to call?  Should that be in this template?  
+             What about sharing reportTemplate with other templateS?  XML include?
+
+             Will we ever need to process data where the pieces need to know about each other
+        -->
+
+        <!-- name is the stringTemplate attribute name that the included data will be added with -->
+        <dataElement name="perf_data">
+            <!-- this block should evaluate to a function that will take whatever data is specified and the returned
+                 data will replace it.  Intended for reformatting/denormalizing to fit the template better -->
+            <dataPreProcess>
+                <![CDATA[
+                (fn [data] 
+                    (clojure.data.json/json-str 
+                      (reduce #(assoc %1 [(:grpid %2) (:timeperiod %2) (:currency %2) (:lor %2) (:asof %2)] (:return %2)) 
+                        {} 
+                        (clojure.data.json/read-json data))))
+                ]]>
+            </dataPreProcess>
+            <!-- data should be the actual report data to be used -->
+            <data>
+                <![CDATA[ [{"return":"0.756","timeperiod":"1mo","asof":"20120131","currency":"USD","lor":"A","grpid":"AAAA"},{"return":"0.004","timeperiod":"2mo","asof":"20120131","currency":"USD","lor":"A","grpid":"AAAA"}]
+                ]]>
+            </data>
+        </dataElement>
+        <dataElement name="perf_prefs">
+            <dataPreProcess/>
+            <data> <![CDATA[ {"precision":3,"grpid":"AAAA","lors":["A","B","C"],"timeperiods":["1mo","2mo","3mo","6mo","9mo","1y","inception"],"currencies":["USD"],"benchmarks":{"1234":"B1","1235":"B2","1236":"B3"}} ]]> 
+            </data>
+        </dataElement>
+    </reportData>
+    <!-- entry is the top level template that will be processed -->
+    <reportTemplate entry="simplePerfReport">
+        <![CDATA[
+            simplePerfReport(perf_data, perf_prefs) ::= <<
+            <html><body>
+                $returnTable(perf_data, perf_prefs)$
+            </body></html>
+            >>
+            returnTable(perf_data, perf_prefs) ::= <<
+                <table>
+                    $headerRow(perf_data, perf_prefs)$
+                    <tbody>
+                        $accountRow(perf_data, perf_prefs)$
+                        $perf_prefs.benchmarks: { bmark | $benchmarkRow(bmark, perf_data, perf_prefs)$ }$
+                    </tbody>
+                </table>
+            >>
+            headerRow(perf_data, perf_prefs) ::= <<
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Level of Return</th>
+                    <th>Currency</th>
+                    $perf_prefs.timeperiods: { tp | <th>$tp$</th> }$
+                </tr>
+                </thead>
+            >>
+            accountRow(perf_data, perf_prefs) ::= <<
+                <tr>
+                    <td>$perf_prefs.grpid$</td>
+                    <td>TODO</td>
+                    <td>TODO</td>
+                    $perf_prefs.timeperiods: { tp | <td>TODO</td> }$
+                </tr>
+            >>
+            benchmarkRow(bmark, perf_data, perf_prefs) ::= <<
+                <tr>
+                    <td>$bmark$</td>
+                    <td>TODO</td>
+                    <td>TODO</td>
+                    $perf_prefs.timeperiods: { tp | <td>TODO</td> }$
+                </tr>
+            >>
+        ]]>
+    </reportTemplate>
+</template>

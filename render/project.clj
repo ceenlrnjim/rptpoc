@@ -5,5 +5,5 @@
 		 [org.clojure/tools.logging "0.2.3"]
                  [org.clojure/data.json "0.1.2"]
 		 [org.antlr/stringtemplate "4.0"]]
-  :main render.core
+  :main render.complexrender
 )
