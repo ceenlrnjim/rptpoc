@@ -12,7 +12,7 @@
   (:gen-class))
 
 (defroutes main-routes
-  (GET "/preference/:clientid" [id] 
+  (GET "/preference/:id" [id] 
        {:status 200
         :body (json/json-str (prefs/preferences id))
         :headers {"Content-Type" "application/json"}})
