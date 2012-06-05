@@ -19,18 +19,19 @@
       (rest (rest attr-seq-pairs)))))
 
 (defn- build-data-url
-  [prefs dates]
-  (let [st (fill-template (ST. "http://localhost:8080/?grpids=<grpids;separator=\",\">&lors=<lors;separator=\",\">&currencies=<currencies;separator=\",\">&dates=<dates;separator=\",\">")
+  [prefs date]
+  (let [st (fill-template (ST. "http://localhost:8080/?grpids=<grpids;separator=\",\">&lors=<lors;separator=\",\">&currencies=<currencies;separator=\",\">&tp=<tp;separator=\",\">&asof=<asof;separator=\",\">")
                            ["grpids" (map name (conj (keys (:benchmarks prefs)) (:grpid prefs)))
                            "lors" (:lors prefs)
                            "currencies" (:currencies prefs)
-                           "dates" dates])]
+                           "asof" [date]
+                           "tp" (:timeperiods prefs)])]
     (.render st)))
 
 (defn -main [& args]
   (let [prefsjson (:body (client/get "http://localhost:8081/preference/AAAA"))
         prefs (json/read-json prefsjson)
-        url (build-data-url prefs ["20120131" "20120229"])
+        url (build-data-url prefs "20120131")
         datajson (:body (client/get url))
         data (json/read-json datajson)]
     (println (client/post "http://localhost:8082/customize"

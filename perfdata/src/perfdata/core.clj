@@ -14,12 +14,13 @@
   (.split s ","))
 
 (defn- make-returns
-  [grpids lors currencies dates]
+  [grpids lors currencies asof timeperiods]
   (map #(assoc {} :grpid (nth % 0) 
                   :lor (nth % 1)
                   :currency (nth % 2)
-                  :date (nth % 3))
-       (comb/cartesian-product grpids lors currencies dates)))
+                  :asof (nth % 3)
+                  :timeperiod (nth % 4))
+       (comb/cartesian-product grpids lors currencies asof timeperiods)))
 
 (defn handler [request]
   (println (:params request))
@@ -28,7 +29,8 @@
             (returns (make-returns (splitseq (:grpids (:params request)))
                                   (splitseq (:lors (:params request)))
                                   (splitseq (:currencies (:params request)))
-                                  (splitseq (:dates (:params request))))))
+                                  (splitseq (:asof (:params request)))
+                                   (splitseq (:tp (:params request))))))
     :headers {"Content-Type" "application/json"}})
 
            
